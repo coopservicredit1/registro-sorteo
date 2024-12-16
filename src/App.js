@@ -83,19 +83,68 @@ export default function App() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    if (formData.autorizacion) {
-      const messageText = formData.afiliacion
-        ? "¡Felicidades! Has triplicado tus opciones al sorteo."
-        : "¡Felicidades! Ya estás participando en el sorteo.";
-      setMessage({ open: true, text: messageText, severity: "success" });
-    } else {
+    if (!formData.autorizacion) {
       setMessage({
         open: true,
         text: "Debes aceptar los términos y condiciones.",
+        severity: "error",
+      });
+      return;
+    }
+
+    const payload = {
+      nombre: formData.nombre,
+      dni: formData.dni,
+      celularPrincipal: formData.celular,
+      celularOpcional: formData.celularOpcional || "",
+      correoPrincipal: formData.correo,
+      correoOpcional: formData.correoOpcional || "",
+      empresa:
+        formData.empresa === "Otros" ? formData.otraEmpresa : formData.empresa,
+      autorizacion: formData.autorizacion,
+      afiliacion: formData.afiliacion,
+    };
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/registrar`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.ok) {
+        const messageText = formData.afiliacion
+          ? "¡Felicidades! Has triplicado tus opciones al sorteo."
+          : "¡Felicidades! Ya estás participando en el sorteo.";
+        setMessage({ open: true, text: messageText, severity: "success" });
+        setFormData({
+          nombre: "",
+          dni: "",
+          celular: "",
+          celularOpcional: "",
+          correo: "",
+          correoOpcional: "",
+          empresa: "",
+          otraEmpresa: "",
+          autorizacion: false,
+          afiliacion: false,
+        });
+      } else {
+        throw new Error("Error al registrar. Por favor, intenta nuevamente.");
+      }
+    } catch (error) {
+      setMessage({
+        open: true,
+        text: error.message || "Error al conectar con el servidor.",
         severity: "error",
       });
     }
