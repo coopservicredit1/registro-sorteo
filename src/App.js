@@ -14,6 +14,7 @@ import {
   DialogActions,
   Alert,
   Snackbar,
+  CircularProgress, // Importamos el CircularProgress para mostrar el spinner
 } from "@mui/material";
 
 const empresas = [
@@ -50,6 +51,8 @@ export default function App() {
     severity: "",
   });
 
+  const [loading, setLoading] = useState(false); // Nuevo estado de carga
+
   const validate = () => {
     const newErrors = {};
 
@@ -85,6 +88,8 @@ export default function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validación inicial
     if (!validate()) return;
 
     if (!formData.autorizacion) {
@@ -96,6 +101,10 @@ export default function App() {
       return;
     }
 
+    // Setear loading a true mientras enviamos la solicitud
+    setLoading(true);
+
+    // Crear el payload
     const payload = {
       nombre: formData.nombre,
       dni: formData.dni,
@@ -121,24 +130,42 @@ export default function App() {
         }
       );
 
+      // Verificar si la respuesta es válida
       if (response.ok) {
-        const messageText = formData.afiliacion
-          ? "¡Felicidades! Has triplicado tus opciones al sorteo."
-          : "¡Felicidades! Ya estás participando en el sorteo.";
-        setMessage({ open: true, text: messageText, severity: "success" });
-        setFormData({
-          nombre: "",
-          dni: "",
-          celular: "",
-          celularOpcional: "",
-          correo: "",
-          correoOpcional: "",
-          empresa: "",
-          otraEmpresa: "",
-          autorizacion: false,
-          afiliacion: false,
-        });
+        const result = await response.json(); // Parsear la respuesta en formato JSON
+
+        // Evaluar el código de respuesta
+        if (result.code === 0) {
+          const messageText = formData.afiliacion
+            ? `¡Felicidades! Has triplicado tus opciones al sorteo. ${result.data}`
+            : `¡Felicidades! Ya estás participando en el sorteo. ${result.data}`;
+          setMessage({ open: true, text: messageText, severity: "success" });
+
+          // Reiniciar el formulario
+          setFormData({
+            nombre: "",
+            dni: "",
+            celular: "",
+            celularOpcional: "",
+            correo: "",
+            correoOpcional: "",
+            empresa: "",
+            otraEmpresa: "",
+            autorizacion: false,
+            afiliacion: false,
+          });
+        } else {
+          // Manejar errores del API (code === 0)
+          setMessage({
+            open: true,
+            text:
+              result.message ||
+              "Error al registrar. Por favor, intenta nuevamente.",
+            severity: "error",
+          });
+        }
       } else {
+        // Manejar errores de red o de servidor
         throw new Error("Error al registrar. Por favor, intenta nuevamente.");
       }
     } catch (error) {
@@ -147,6 +174,9 @@ export default function App() {
         text: error.message || "Error al conectar con el servidor.",
         severity: "error",
       });
+    } finally {
+      // Setear loading a false una vez que termina el proceso
+      setLoading(false);
     }
   };
 
@@ -296,8 +326,13 @@ export default function App() {
           color="primary"
           fullWidth
           sx={{ marginY: 2 }}
+          disabled={loading} // Deshabilitar el botón mientras se está registrando
         >
-          Participa en el Sorteo
+          {loading ? (
+            <CircularProgress size={24} color="inherit" /> // Mostrar el spinner
+          ) : (
+            "Participa en el Sorteo"
+          )}
         </Button>
       </Box>
 
@@ -307,7 +342,7 @@ export default function App() {
         <DialogContent>
           <Typography>
             Al participar, autorizas el uso de tus datos personales conforme a
-            la Ley de Protección de Datos...
+            la Ley de Protección de Datos Personales.{" "}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -319,6 +354,7 @@ export default function App() {
 
       {/* Snackbar */}
       <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         open={message.open}
         autoHideDuration={4000}
         onClose={() => setMessage({ ...message, open: false })}
