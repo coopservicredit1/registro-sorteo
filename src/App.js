@@ -16,6 +16,15 @@ import {
   Snackbar,
   CircularProgress, // Importamos el CircularProgress para mostrar el spinner
 } from "@mui/material";
+import PanToolAltOutlinedIcon from "@mui/icons-material/PanToolAltOutlined";
+//VIEW PDF
+// Core viewer
+import { Viewer } from "@react-pdf-viewer/core";
+// Plugins
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+// Import styles
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 const empresas = [
   "Camposol",
@@ -44,7 +53,6 @@ export default function App() {
   });
 
   const [errors, setErrors] = useState({});
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState({
     open: false,
     text: "",
@@ -137,8 +145,8 @@ export default function App() {
         // Evaluar el código de respuesta
         if (result.code === 0) {
           const messageText = formData.afiliacion
-            ? `¡Felicidades! Has triplicado tus opciones al sorteo. ${result.data}`
-            : `¡Felicidades! Ya estás participando en el sorteo. ${result.data}`;
+            ? `¡Felicidades! Has triplicado tus opciones al sorteo.`
+            : `¡Felicidades! Ya estás participando en el sorteo.`;
           setMessage({ open: true, text: messageText, severity: "success" });
 
           // Reiniciar el formulario
@@ -180,7 +188,37 @@ export default function App() {
     }
   };
 
-  const handleDialogClose = () => setIsDialogOpen(false);
+  //Dialog PDF
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [pdfFile, setPdfFile] = useState(""); // Archivo PDF
+
+  // Abre el Dialog con el PDF correspondiente
+  const handleDialogOpen = (pdfType) => {
+    if (pdfType === "privacidad") {
+      setPdfFile("/pdf/privacidad.pdf");
+    } else if (pdfType === "afiliacion") {
+      setPdfFile("/pdf/afiliacion.pdf");
+    }
+    setIsDialogOpen(true);
+  };
+
+  // Cierra el Dialog
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  // Título dinámico del Dialog
+  const getDialogTitle = () => {
+    if (pdfFile.includes("privacidad")) {
+      return "Política de Privacidad";
+    } else if (pdfFile.includes("afiliacion")) {
+      return "Solicitud de Afiliación";
+    }
+    return "Política";
+  };
+
+  // Create new plugin instance
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   return (
     <Container maxWidth="sm">
@@ -213,7 +251,7 @@ export default function App() {
         />
 
         <TextField
-          label="Celular Principal"
+          label="Celular Personal"
           name="celular"
           value={formData.celular}
           onChange={handleChange}
@@ -223,8 +261,7 @@ export default function App() {
           margin="normal"
           inputProps={{ maxLength: 9 }}
         />
-
-        <TextField
+        {/* <TextField
           label="Celular Opcional"
           name="celularOpcional"
           value={formData.celularOpcional}
@@ -234,10 +271,10 @@ export default function App() {
           fullWidth
           margin="normal"
           inputProps={{ maxLength: 9 }}
-        />
+        /> */}
 
         <TextField
-          label="Correo Principal"
+          label="Correo Personal"
           name="correo"
           value={formData.correo}
           onChange={handleChange}
@@ -247,7 +284,7 @@ export default function App() {
           margin="normal"
         />
 
-        <TextField
+        {/* <TextField
           label="Correo Opcional"
           name="correoOpcional"
           value={formData.correoOpcional}
@@ -256,7 +293,7 @@ export default function App() {
           helperText={errors.correoOpcional}
           fullWidth
           margin="normal"
-        />
+        /> */}
 
         <TextField
           label="¿A qué empresa perteneces?"
@@ -298,16 +335,48 @@ export default function App() {
               onChange={handleChange}
             />
           }
-          label="Acepto los términos y condiciones de uso de datos personales"
+          label="Acepto el tratamiento de mis datos personales."
         />
 
         <Button
           variant="text"
-          onClick={() => setIsDialogOpen(true)}
-          sx={{ textTransform: "none" }}
+          onClick={() => handleDialogOpen("privacidad")}
+          sx={{
+            textTransform: "none",
+            display: "block",
+            textAlign: "left",
+            marginTop: -0.5,
+          }}
         >
-          Ver Políticas
+          Ver políticas de privacidad de uso de datos personales.
         </Button>
+
+        <Box
+          display="flex"
+          alignItems="center"
+          mb={1}
+          sx={{
+            backgroundColor: "#ea8651", // Color claro del tema primario
+            color: "black", // Texto que contraste con el fondo
+            padding: "2px 4px", // Más espacio interno
+            borderRadius: 1, // Bordes redondeados para un diseño más moderno
+            boxShadow: 1, // Sombra suave para resaltar
+            marginTop: 2.5, // Espaciado hacia arriba
+            marginBottom: 0, // Espaciado hacia abajo
+          }}
+        >
+          <PanToolAltOutlinedIcon
+            sx={{
+              marginLeft: -0.5, // Espaciado a la izquierda
+              fontSize: 25, // Tamaño del ícono
+              transform: "rotate(180deg)", // Rotar hacia abajo
+              mr: 0.5, // Espaciado entre el ícono y el texto
+            }}
+          />
+          <Typography variant="caption" fontWeight="bold">
+            TRIPLICA AQUÍ TUS OPCIONES AL SORTEO
+          </Typography>
+        </Box>
 
         <FormControlLabel
           control={
@@ -317,15 +386,28 @@ export default function App() {
               onChange={handleChange}
             />
           }
-          label="Quiero afiliarme a Servicredit"
+          label="Quiero afiliarme a Sericredit"
         />
+
+        <Button
+          variant="text"
+          onClick={() => handleDialogOpen("afiliacion")}
+          sx={{
+            textTransform: "none",
+            display: "block",
+            textAlign: "left",
+            marginTop: -0.5,
+          }}
+        >
+          Ver solicitud de afiliación.
+        </Button>
 
         <Button
           type="submit"
           variant="contained"
           color="primary"
           fullWidth
-          sx={{ marginY: 2 }}
+          sx={{ marginY: 3 }}
           disabled={loading} // Deshabilitar el botón mientras se está registrando
         >
           {loading ? (
@@ -336,14 +418,24 @@ export default function App() {
         </Button>
       </Box>
 
-      {/* Modal */}
-      <Dialog open={isDialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Políticas de Tratamiento de Datos</DialogTitle>
+      {/* Dialog PDF */}
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>{getDialogTitle()}</DialogTitle>
         <DialogContent>
-          <Typography>
-            Al participar, autorizas el uso de tus datos personales conforme a
-            la Ley de Protección de Datos Personales.{" "}
-          </Typography>
+          {pdfFile && (
+            <Viewer
+              fileUrl={pdfFile}
+              plugins={[
+                // Register plugins
+                defaultLayoutPluginInstance,
+              ]}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
@@ -351,15 +443,25 @@ export default function App() {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Snackbar */}
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         open={message.open}
-        autoHideDuration={4000}
+        autoHideDuration={6000}
         onClose={() => setMessage({ ...message, open: false })}
+        sx={{
+          "& .MuiPaper-root": {
+            minWidth: "300px", // Ancho mínimo del Snackbar
+            padding: "20px", // Relleno para hacerlo más espacioso
+          },
+        }}
       >
-        <Alert severity={message.severity}>{message.text}</Alert>
+        <Alert
+          severity={message.severity}
+          sx={{ fontSize: "1.08rem", padding: "1rem", margin: "0 2rem 3rem" }} // Tamaño del texto y relleno del Alert
+        >
+          {message.text}
+        </Alert>
       </Snackbar>
     </Container>
   );
