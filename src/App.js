@@ -19,7 +19,7 @@ import {
 import PanToolAltOutlinedIcon from "@mui/icons-material/PanToolAltOutlined";
 //VIEW PDF
 // Core viewer
-import { Viewer } from "@react-pdf-viewer/core";
+import { Viewer, Worker } from "@react-pdf-viewer/core";
 // Plugins
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 // Import styles
@@ -428,13 +428,18 @@ export default function App() {
         <DialogTitle>{getDialogTitle()}</DialogTitle>
         <DialogContent>
           {pdfFile && (
-            <Viewer
-              fileUrl={pdfFile}
-              plugins={[
-                // Register plugins
-                defaultLayoutPluginInstance,
-              ]}
-            />
+            <>
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                {/* Tu código para mostrar el PDF */}
+                <Viewer
+                  fileUrl={pdfFile}
+                  plugins={[
+                    // Register plugins
+                    defaultLayoutPluginInstance,
+                  ]}
+                />
+              </Worker>
+            </>
           )}
         </DialogContent>
         <DialogActions>
