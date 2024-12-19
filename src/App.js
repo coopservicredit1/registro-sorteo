@@ -16,12 +16,12 @@ import {
   Snackbar,
   CircularProgress, // Importamos el CircularProgress para mostrar el spinner
 } from "@mui/material";
-import PanToolAltOutlinedIcon from "@mui/icons-material/PanToolAltOutlined";
+//import PanToolAltOutlinedIcon from "@mui/icons-material/PanToolAltOutlined";
 //VIEW PDF
 // Core viewer
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 // Plugins
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+// import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 // Import styles
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
@@ -218,7 +218,7 @@ export default function App() {
   };
 
   // Create new plugin instance
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  // const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   return (
     <Container maxWidth="sm">
@@ -356,25 +356,30 @@ export default function App() {
           alignItems="center"
           mb={1}
           sx={{
-            backgroundColor: "#ea8651", // Color claro del tema primario
-            color: "black", // Texto que contraste con el fondo
-            padding: "2px 4px", // Más espacio interno
-            borderRadius: 1, // Bordes redondeados para un diseño más moderno
-            boxShadow: 1, // Sombra suave para resaltar
-            marginTop: 2.5, // Espaciado hacia arriba
-            marginBottom: 0, // Espaciado hacia abajo
+            backgroundColor: "#fe944b", // Fondo naranja
+            color: "black", // Texto negro
+            padding: "4px 8px", // Espaciado interno
+            borderRadius: 1, // Bordes redondeados
+            boxShadow: 1, // Sombra
+            marginTop: 2.5, // Espaciado superior
+            marginBottom: 0, // Espaciado inferior
           }}
         >
-          <PanToolAltOutlinedIcon
+          <Typography variant="caption" sx={{ fontWeight: "bold" }}>
+            Triplica <span style={{ fontWeight: "bold" }}>AQUÍ</span>
+          </Typography>
+          <Box
+            component="img"
+            src="/images/finger.png"
+            alt="Finger pointing"
             sx={{
-              marginLeft: -0.5, // Espaciado a la izquierda
-              fontSize: 25, // Tamaño del ícono
-              transform: "rotate(180deg)", // Rotar hacia abajo
-              mr: 0.5, // Espaciado entre el ícono y el texto
+              width: 25, // Ancho de la imagen
+              height: 25, // Alto de la imagen
+              marginLeft: 0.5, // Espaciado entre la imagen y el texto
             }}
           />
-          <Typography variant="caption" fontWeight="bold">
-            TRIPLICA AQUÍ TUS OPCIONES AL SORTEO
+          <Typography variant="caption" sx={{ fontWeight: "bold" }}>
+            tus opciones al sorteo
           </Typography>
         </Box>
 
@@ -433,10 +438,12 @@ export default function App() {
                 {/* Tu código para mostrar el PDF */}
                 <Viewer
                   fileUrl={pdfFile}
-                  plugins={[
-                    // Register plugins
-                    defaultLayoutPluginInstance,
-                  ]}
+                  plugins={
+                    [
+                      // Register plugins
+                      //defaultLayoutPluginInstance,
+                    ]
+                  }
                 />
               </Worker>
             </>
