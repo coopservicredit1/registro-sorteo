@@ -391,7 +391,7 @@ export default function App() {
               onChange={handleChange}
             />
           }
-          label="Quiero afiliarme a Sericredit"
+          label="Quiero afiliarme"
         />
 
         <Button
