@@ -223,7 +223,7 @@ export default function App() {
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" align="center" marginY={2}>
-        Registro al Sorteo
+        Registro a Servicredit
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit} noValidate>
