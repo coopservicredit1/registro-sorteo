@@ -146,7 +146,7 @@ export default function App() {
         if (result.code === 0) {
           const messageText = formData.afiliacion
             ? `¡Felicidades! Ya estas a un paso de ser parte de Servicredit.`
-            : `¡Felicidades! Ya se grabaron tus datos, nos pondremos en contacto.`;
+            : `¡Felicidades! Ya se grabaron tus datos, nos pondremos en contacto .`;
           setMessage({ open: true, text: messageText, severity: "success" });
 
           // Reiniciar el formulario
