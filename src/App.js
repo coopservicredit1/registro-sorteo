@@ -379,7 +379,7 @@ export default function App() {
             }}
           />
           <Typography variant="caption" sx={{ fontWeight: "bold" }}>
-            tus opciones al sorteo
+            a Servicredit
           </Typography>
         </Box>
 
