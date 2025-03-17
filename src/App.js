@@ -366,7 +366,7 @@ export default function App() {
           }}
         >
           <Typography variant="caption" sx={{ fontWeight: "bold" }}>
-            Triplica <span style={{ fontWeight: "bold" }}>AQUÍ</span>
+            Registrate <span style={{ fontWeight: "bold" }}>AQUÍ</span>
           </Typography>
           <Box
             component="img"
