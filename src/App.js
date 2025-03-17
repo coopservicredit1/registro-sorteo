@@ -145,8 +145,8 @@ export default function App() {
         // Evaluar el código de respuesta
         if (result.code === 0) {
           const messageText = formData.afiliacion
-            ? `¡Felicidades! Has triplicado tus opciones al sorteo.`
-            : `¡Felicidades! Ya estás participando en el sorteo.`;
+            ? `¡Felicidades! Ya estas a un paso de ser parte de Servicredit.`
+            : `¡Felicidades! Ya se grabaron tus datos, nos pondremos en contacto.`;
           setMessage({ open: true, text: messageText, severity: "success" });
 
           // Reiniciar el formulario
@@ -418,7 +418,7 @@ export default function App() {
           {loading ? (
             <CircularProgress size={24} color="inherit" /> // Mostrar el spinner
           ) : (
-            "Participa en el Sorteo"
+            "Se parte de Servicredit"
           )}
         </Button>
       </Box>
